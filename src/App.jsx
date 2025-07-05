@@ -17,9 +17,9 @@ import Brightness4Icon from '@mui/icons-material/Brightness4'; // Moon
 import Brightness7Icon from '@mui/icons-material/Brightness7'; // Sun
 import MenuIcon from '@mui/icons-material/Menu';
 
-import LocalToUtcConverter from './components/LocalToUtcConverter';
-import DescentCalculator from './components/DescentCalculator';
-import UtcToLocalConverter from './components/UtcToLocalConverter';
+import LocalToUtcConverter from './Components/LocalToUtcConverter';
+import DescentCalculator from './Components/DescentTools/DescentCalculator';
+import UtcToLocalConverter from './Components/UtcToLocalConverter';
 
 const THEME_KEY = 'sim-utils-theme';
 
