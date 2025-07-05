@@ -44,7 +44,7 @@ export default function UtcToLocalConverter() {
         }}
       >
         <Typography variant="h5" component="h2">
-          Local to UTC Time Converter
+          UTC to Local Time Converter
         </Typography>
         <AccessTimeIcon fontSize="large" />
       </Box>

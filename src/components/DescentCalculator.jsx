@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Box, Typography, Paper, Grid } from '@mui/material';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
 
+//todo: Add glideslope angle calc
+//todo: Calc vspeed->angle and vice versa
+//todo: Add graph showing descent gradient over time, over distance (maybe)
+
 export default function DescentCalculator() {
   const [currentAlt, setCurrentAlt] = useState('');
   const [nextAlt, setNextAlt] = useState('');
