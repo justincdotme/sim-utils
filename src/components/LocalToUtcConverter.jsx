@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Grid,
   FormControl,
@@ -14,44 +14,18 @@ import {
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import TIMEZONES from '../constants/timezones';
 
-const TIMEZONES = [
-  { label: 'UTC−12:00 – Baker Island', offset: -12 },
-  { label: 'UTC−11:00 – American Samoa', offset: -11 },
-  { label: 'UTC−10:00 – Hawaii', offset: -10 },
-  { label: 'UTC−09:00 – Alaska', offset: -9 },
-  { label: 'UTC−08:00 – Pacific (US & Canada)', offset: -8 },
-  { label: 'UTC−07:00 – Mountain (US & Canada)', offset: -7 },
-  { label: 'UTC−06:00 – Central (US & Canada)', offset: -6 },
-  { label: 'UTC−05:00 – Eastern (US & Canada)', offset: -5 },
-  { label: 'UTC−04:00 – Atlantic (Canada)', offset: -4 },
-  { label: 'UTC−03:00 – Buenos Aires', offset: -3 },
-  { label: 'UTC−02:00 – South Georgia', offset: -2 },
-  { label: 'UTC−01:00 – Azores', offset: -1 },
-  { label: 'UTC±00:00 – London, Lisbon', offset: 0 },
-  { label: 'UTC+01:00 – Berlin, Paris, Rome', offset: 1 },
-  { label: 'UTC+02:00 – Athens, Cape Town', offset: 2 },
-  { label: 'UTC+03:00 – Moscow, Nairobi', offset: 3 },
-  { label: 'UTC+04:00 – Dubai', offset: 4 },
-  { label: 'UTC+05:00 – Karachi', offset: 5 },
-  { label: 'UTC+05:30 – India Standard Time', offset: 5.5 },
-  { label: 'UTC+06:00 – Dhaka', offset: 6 },
-  { label: 'UTC+07:00 – Bangkok, Jakarta', offset: 7 },
-  { label: 'UTC+08:00 – Singapore, Beijing', offset: 8 },
-  { label: 'UTC+09:00 – Tokyo, Seoul', offset: 9 },
-  { label: 'UTC+10:00 – Sydney', offset: 10 },
-  { label: 'UTC+11:00 – Solomon Islands', offset: 11 },
-  { label: 'UTC+12:00 – Fiji, Auckland', offset: 12 },
-  { label: 'UTC+13:00 – Tonga', offset: 13 },
-  { label: 'UTC+14:00 – Kiritimati', offset: 14 },
-];
-
-export default function LocalToUtcConverter() {
-  const [selectedTimezone, setSelectedTimezone] = useState(TIMEZONES[4]);
+export default function LocalToUtcConverter({ onInitialUtcTimeCalculated }) {
+  const systemTzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const initialTimezone =
+    TIMEZONES.find((tz) => tz.name === systemTzName) || TIMEZONES[0];
+  const [selectedTimezone, setSelectedTimezone] = useState(initialTimezone);
   const [isDST, setIsDST] = useState(true);
+
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [selectedTime, setSelectedTime] = useState(dayjs());
-
+  
   const combinedLocal = selectedDate
     .set('hour', selectedTime.hour())
     .set('minute', selectedTime.minute());
@@ -61,9 +35,15 @@ export default function LocalToUtcConverter() {
     'hour'
   );
 
+  useEffect(() => {
+    if (typeof onInitialUtcTimeCalculated === 'function') {
+      onInitialUtcTimeCalculated(utcTime);
+    }
+  }, []);
+
   return (
     <Paper elevation={3} sx={{ p: 3, mt: 4 }}>
-       <Box
+      <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -100,7 +80,6 @@ export default function LocalToUtcConverter() {
                 </Select>
               </FormControl>
             </Grid>
-
             <Grid item xs={1}>
               <FormControlLabel
                 control={
@@ -114,8 +93,6 @@ export default function LocalToUtcConverter() {
             </Grid>
           </Grid>
         </Grid>
-
-        {/* Row 2: Local date/time and UTC result */}
         <Grid item xs={12}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={3}>
@@ -126,7 +103,6 @@ export default function LocalToUtcConverter() {
                 slotProps={{ textField: { size: 'small', fullWidth: true } }}
               />
             </Grid>
-
             <Grid item xs={3}>
               <TimePicker
                 label="Local Time"
@@ -135,7 +111,6 @@ export default function LocalToUtcConverter() {
                 slotProps={{ textField: { size: 'small', fullWidth: true } }}
               />
             </Grid>
-
             <Grid item xs={6}>
               <Box
                 sx={{
@@ -154,7 +129,7 @@ export default function LocalToUtcConverter() {
                 }}
               >
                 <AccessTimeIcon fontSize="small" sx={{ mr: 1 }} />
-                {utcTime.format('YYYY-MM-DD HH:mm')} UTC
+                {utcTime.format('MM-DD-YYYY HH:mm')} UTC
               </Box>
             </Grid>
           </Grid>
