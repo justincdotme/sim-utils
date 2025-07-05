@@ -1,0 +1,33 @@
+const TIMEZONES = [
+  { label: 'UTC-12:00 - Baker Island', offset: -12 },
+  { label: 'UTC-11:00 - American Samoa', offset: -11 },
+  { label: 'UTC-10:00 - Hawaii', offset: -10 },
+  { label: 'UTC-09:00 - Alaska', offset: -9 },
+  { label: 'UTC-08:00 - Pacific (US & Canada)', offset: -8 },
+  { label: 'UTC-07:00 - Mountain (US & Canada)', offset: -7 },
+  { label: 'UTC-06:00 - Central (US & Canada)', offset: -6 },
+  { label: 'UTC-05:00 - Eastern (US & Canada)', offset: -5 },
+  { label: 'UTC-04:00 - Atlantic (Canada)', offset: -4 },
+  { label: 'UTC-03:00 - Buenos Aires', offset: -3 },
+  { label: 'UTC-02:00 - South Georgia', offset: -2 },
+  { label: 'UTC-01:00 - Azores', offset: -1 },
+  { label: 'UTC±00:00 - London, Lisbon', offset: 0 },
+  { label: 'UTC+01:00 - Berlin, Paris, Rome', offset: 1 },
+  { label: 'UTC+02:00 - Athens, Cape Town', offset: 2 },
+  { label: 'UTC+03:00 - Moscow, Nairobi', offset: 3 },
+  { label: 'UTC+04:00 - Dubai', offset: 4 },
+  { label: 'UTC+05:00 - Karachi', offset: 5 },
+  { label: 'UTC+05:30 - India Standard Time', offset: 5.5 },
+  { label: 'UTC+06:00 - Dhaka', offset: 6 },
+  { label: 'UTC+07:00 - Bangkok, Jakarta', offset: 7 },
+  { label: 'UTC+08:00 - Singapore, Beijing', offset: 8 },
+  { label: 'UTC+09:00 - Tokyo, Seoul', offset: 9 },
+  { label: 'UTC+10:00 - Sydney', offset: 10 },
+  { label: 'UTC+11:00 - Solomon Islands', offset: 11 },
+  { label: 'UTC+12:00 - Fiji, Auckland', offset: 12 },
+  { label: 'UTC+13:00 - Tonga', offset: 13 },
+  { label: 'UTC+14:00 - Kiritimati', offset: 14 },
+];
+
+
+export default TIMEZONES;
