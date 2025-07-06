@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TextField, Grid, InputAdornment } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
-export default function FPADescentCalculator() {
+export default function FPADescentCalculator({ onValidData }) {
   const [currentAlt, setCurrentAlt] = useState('');
   const [distanceToGo, setDistanceToGo] = useState('');
   const [descentAngle, setDescentAngle] = useState('');
@@ -11,6 +11,8 @@ export default function FPADescentCalculator() {
   const [vspeed, setVspeed] = useState('');
   const [error, setError] = useState('');
   const [isEndingAltNegative, setIsEndingAltNegative] = useState(false);
+
+  const lastSentData = useRef(null);
 
   const calculate = () => {
     const curAlt = parseFloat(currentAlt);
@@ -23,6 +25,10 @@ export default function FPADescentCalculator() {
       setVspeed('');
       setError('');
       setIsEndingAltNegative(false);
+      if (lastSentData.current !== null) {
+        lastSentData.current = null;
+        onValidData && onValidData(null);
+      }
       return;
     }
 
@@ -41,20 +47,35 @@ export default function FPADescentCalculator() {
     } else {
       setVspeed('---');
     }
+
+    const newData = {
+      curAlt,
+      dist,
+      descentAngle: angle,
+      gs: gs > 0 ? gs : null,
+      vs: !isNaN(gs) && gs > 0 ? (descentFeet / distanceFeet) * (gs * 6076.12 / 60) : null,
+    };
+
+    if (JSON.stringify(newData) !== JSON.stringify(lastSentData.current)) {
+      lastSentData.current = newData;
+      onValidData && onValidData(newData);
+    }
   };
 
   useEffect(() => {
     calculate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAlt, distanceToGo, descentAngle, groundSpeed]);
 
   return (
     <Grid container spacing={2}>
+      {/* UI unchanged */}
       <Grid item xs={6}>
         <TextField
           label="Current Altitude (ft)"
           type="number"
           value={currentAlt}
-          onChange={e => setCurrentAlt(e.target.value)}
+          onChange={(e) => setCurrentAlt(e.target.value)}
           fullWidth
         />
       </Grid>
@@ -63,7 +84,7 @@ export default function FPADescentCalculator() {
           label="Distance to Go (NM)"
           type="number"
           value={distanceToGo}
-          onChange={e => setDistanceToGo(e.target.value)}
+          onChange={(e) => setDistanceToGo(e.target.value)}
           fullWidth
         />
       </Grid>
@@ -72,7 +93,7 @@ export default function FPADescentCalculator() {
           label="Descent Angle (°)"
           type="number"
           value={descentAngle}
-          onChange={e => setDescentAngle(e.target.value)}
+          onChange={(e) => setDescentAngle(e.target.value)}
           fullWidth
         />
       </Grid>
@@ -81,7 +102,7 @@ export default function FPADescentCalculator() {
           label="Ground Speed (knots)"
           type="number"
           value={groundSpeed}
-          onChange={e => setGroundSpeed(e.target.value)}
+          onChange={(e) => setGroundSpeed(e.target.value)}
           fullWidth
         />
       </Grid>

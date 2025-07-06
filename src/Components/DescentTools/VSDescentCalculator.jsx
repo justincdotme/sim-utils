@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TextField, Grid, Box } from '@mui/material';
 
-export default function VSDescentCalculator() {
+export default function VSDescentCalculator({ onValidData }) {
   const [currentAlt, setCurrentAlt] = useState('');
   const [nextAlt, setNextAlt] = useState('');
   const [distanceToGo, setDistanceToGo] = useState('');
@@ -9,6 +9,10 @@ export default function VSDescentCalculator() {
   const [verticalSpeed, setVerticalSpeed] = useState('');
   const [descentAngle, setDescentAngle] = useState('');
   const [error, setError] = useState('');
+  
+  const lastSentData = useRef(null);
+
+  const isValidNumber = (n) => typeof n === 'number' && !isNaN(n);
 
   const calculate = () => {
     const curAlt = parseFloat(currentAlt);
@@ -16,24 +20,34 @@ export default function VSDescentCalculator() {
     const dist = parseFloat(distanceToGo);
     const gs = parseFloat(groundSpeed);
 
+    // Validate inputs
     if (
-      isNaN(curAlt) ||
-      isNaN(tgtAlt) ||
-      isNaN(dist) ||
-      isNaN(gs) ||
+      !isValidNumber(curAlt) ||
+      !isValidNumber(tgtAlt) ||
+      !isValidNumber(dist) ||
+      !isValidNumber(gs) ||
       dist <= 0 ||
       gs <= 0
     ) {
       setVerticalSpeed('');
       setDescentAngle('');
       setError('');
+      // Only call onValidData(null) if previous was not null
+      if (lastSentData.current !== null) {
+        lastSentData.current = null;
+        onValidData && onValidData(null);
+      }
       return;
     }
 
     if (curAlt <= tgtAlt) {
       setVerticalSpeed('');
       setDescentAngle('');
-      setError('Current altitude must be higher than next altitude');
+      setError('Current altitude must be higher than target altitude');
+      if (lastSentData.current !== null) {
+        lastSentData.current = null;
+        onValidData && onValidData(null);
+      }
       return;
     }
 
@@ -45,10 +59,34 @@ export default function VSDescentCalculator() {
 
     setVerticalSpeed(vs.toFixed(0));
     setDescentAngle(angleDeg.toFixed(2));
+
+    // Compose new data ensuring all are numbers and no NaNs
+    const newData = {
+      curAlt,
+      dist,
+      gs,
+      vs,
+      descentAngle: angleDeg,
+    };
+
+    // Compare previous and new data deeply (only simple props)
+    const last = lastSentData.current;
+    if (
+      !last ||
+      last.curAlt !== newData.curAlt ||
+      last.dist !== newData.dist ||
+      last.gs !== newData.gs ||
+      last.vs !== newData.vs ||
+      last.descentAngle !== newData.descentAngle
+    ) {
+      lastSentData.current = newData;
+      onValidData && onValidData(newData);
+    }
   };
 
   useEffect(() => {
     calculate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAlt, nextAlt, distanceToGo, groundSpeed]);
 
   return (
@@ -58,7 +96,7 @@ export default function VSDescentCalculator() {
           label="Current Altitude (ft)"
           type="number"
           value={currentAlt}
-          onChange={e => setCurrentAlt(e.target.value)}
+          onChange={(e) => setCurrentAlt(e.target.value)}
           fullWidth
         />
       </Grid>
@@ -67,7 +105,7 @@ export default function VSDescentCalculator() {
           label="Target Altitude (ft)"
           type="number"
           value={nextAlt}
-          onChange={e => setNextAlt(e.target.value)}
+          onChange={(e) => setNextAlt(e.target.value)}
           fullWidth
         />
       </Grid>
@@ -76,7 +114,7 @@ export default function VSDescentCalculator() {
           label="Distance to Go (NM)"
           type="number"
           value={distanceToGo}
-          onChange={e => setDistanceToGo(e.target.value)}
+          onChange={(e) => setDistanceToGo(e.target.value)}
           fullWidth
         />
       </Grid>
@@ -85,13 +123,15 @@ export default function VSDescentCalculator() {
           label="Ground Speed (knots)"
           type="number"
           value={groundSpeed}
-          onChange={e => setGroundSpeed(e.target.value)}
+          onChange={(e) => setGroundSpeed(e.target.value)}
           fullWidth
         />
       </Grid>
       {error && (
         <Grid item xs={12}>
-          <Box mt={1} color="error.main">{error}</Box>
+          <Box mt={1} color="error.main">
+            {error}
+          </Box>
         </Grid>
       )}
       <Grid item xs={6}>
