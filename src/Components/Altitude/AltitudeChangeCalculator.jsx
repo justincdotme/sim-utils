@@ -45,7 +45,7 @@ export default function AltitudeChangeCalculator() {
       : <StraightenIcon fontSize="large" />; // default icon if altitudes unknown or equal
 
   return (
-    <Paper sx={{ p: 3 }}>
+    <Paper elevation={3} sx={{ p: 3}}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Typography variant="h5" component="h2">
           Altitude Change Calculator

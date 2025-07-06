@@ -20,6 +20,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LocalToUtcConverter from './Components/LocalToUtcConverter';
 import AltitudeChangeCalculator from './Components/Altitude/AltitudeChangeCalculator';
 import UtcToLocalConverter from './Components/UtcToLocalConverter';
+import ETACalculator from './Components/EtaCalculator';
 
 const THEME_KEY = 'sim-utils-theme';
 
@@ -47,6 +48,7 @@ export default function App() {
     const locUtcRef = useRef(null);
     const utcLocRef = useRef(null);
     const altChangeRef = useRef(null);
+    const etaCalcRef = useRef(null);
 
     const toggleTheme = () => {
         const newMode =
@@ -111,6 +113,7 @@ export default function App() {
                 <MenuItem onClick={() => scrollToRef(altChangeRef)}>📉 Altitude Calculator</MenuItem>
                 <MenuItem onClick={() => scrollToRef(locUtcRef)}>🕓 Local to UTC Converter</MenuItem>
                 <MenuItem onClick={() => scrollToRef(utcLocRef)}>🕓 UTC to Local Converter</MenuItem>
+                <MenuItem onClick={() => scrollToRef(etaCalcRef)}>🕓 ETA Calculator</MenuItem>
             </Menu>
 
             <Container maxWidth="md" sx={{ py: 4 }}>
@@ -122,6 +125,9 @@ export default function App() {
                 </section>
                 <section ref={utcLocRef} id="utc-to-local-converter">
                     <UtcToLocalConverter initialUtcTime={sharedUtcTime} />
+                </section>
+                <section ref={etaCalcRef}>
+                    <ETACalculator />
                 </section>
             </Container>
         </ThemeProvider>
