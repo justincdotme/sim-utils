@@ -7,7 +7,7 @@ export default function VSCalculator({ onValidData, isClimb, isDescent }) {
   const [distanceToGo, setDistanceToGo] = useState('');
   const [groundSpeed, setGroundSpeed] = useState('');
   const [verticalSpeed, setVerticalSpeed] = useState('');
-  const [descentAngle, setDescentAngle] = useState('');
+  const [altChangeAngle, setAltChangeAngle] = useState('');
   const [error, setError] = useState('');
 
   const lastSentData = useRef(null);
@@ -30,7 +30,7 @@ export default function VSCalculator({ onValidData, isClimb, isDescent }) {
       gs <= 0
     ) {
       setVerticalSpeed('');
-      setDescentAngle('');
+      setAltChangeAngle('');
       setError('');
       if (lastSentData.current !== null) {
         lastSentData.current = null;
@@ -41,18 +41,14 @@ export default function VSCalculator({ onValidData, isClimb, isDescent }) {
 
     setError('');
 
-    // Determine climb or descent
     const climb = curAlt < tgtAlt;
     const descent = curAlt > tgtAlt;
-
     const altDiff = Math.abs(curAlt - tgtAlt);
 
     // Vertical Speed = altitude difference divided by time in minutes (distance/groundspeed)
-    // VS = (altDiff / dist) * (gs / 60)
     const vs = (altDiff / dist) * (gs / 60);
 
     // Angle in radians = atan(altDiff / distance in feet)
-    // Distance NM to feet = dist * 6076.12
     const angleRad = Math.atan(altDiff / (dist * 6076.12));
     const angleDeg = angleRad * (180 / Math.PI);
 
@@ -60,15 +56,15 @@ export default function VSCalculator({ onValidData, isClimb, isDescent }) {
     const sign = climb ? '+' : descent ? '−' : '';
 
     setVerticalSpeed(sign + vs.toFixed(0));
-    setDescentAngle(sign + angleDeg.toFixed(2));
+    setAltChangeAngle(sign + angleDeg.toFixed(2));
 
     const newData = {
       curAlt,
       tgtAlt,
       dist,
       gs,
-      vs: climb ? vs : -vs,           // positive VS if climb, negative if descent
-      descentAngle: climb ? angleDeg : -angleDeg, // positive angle for climb, negative for descent
+      vs: climb ? vs : -vs,                 // positive VS if climb, negative if descent
+      altChangeAngle: climb ? angleDeg : -angleDeg,  // signed angle
     };
 
     const last = lastSentData.current;
@@ -79,7 +75,7 @@ export default function VSCalculator({ onValidData, isClimb, isDescent }) {
       last.dist !== newData.dist ||
       last.gs !== newData.gs ||
       last.vs !== newData.vs ||
-      last.descentAngle !== newData.descentAngle
+      last.altChangeAngle !== newData.altChangeAngle
     ) {
       lastSentData.current = newData;
       onValidData && onValidData(newData);
@@ -145,8 +141,8 @@ export default function VSCalculator({ onValidData, isClimb, isDescent }) {
       </Grid>
       <Grid item xs={6}>
         <TextField
-          label="Descent Angle (°)"
-          value={descentAngle}
+          label="Altitude Change Angle (°)"
+          value={altChangeAngle}
           InputProps={{ readOnly: true }}
           fullWidth
         />

@@ -26,7 +26,7 @@ export default function AltitudeChangeCalculator() {
       setStartAlt(data.curAlt);
       setEndAlt(data.tgtAlt);
     } else if (data && typeof data.curAlt === 'number' && typeof data.endAlt === 'number') {
-      // For FPADescentCalculator, endAlt key is different
+      // For FPACalculator, endAlt key is different
       setStartAlt(data.curAlt);
       setEndAlt(data.endAlt);
     } else {
