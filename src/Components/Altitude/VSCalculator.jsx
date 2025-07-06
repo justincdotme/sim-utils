@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TextField, Grid, Box } from '@mui/material';
 
-export default function VSDescentCalculator({ onValidData }) {
+export default function VSCalculator({ onValidData, isClimb, isDescent }) {
   const [currentAlt, setCurrentAlt] = useState('');
   const [nextAlt, setNextAlt] = useState('');
   const [distanceToGo, setDistanceToGo] = useState('');
   const [groundSpeed, setGroundSpeed] = useState('');
   const [verticalSpeed, setVerticalSpeed] = useState('');
-  const [descentAngle, setDescentAngle] = useState('');
+  const [altChangeAngle, setAltChangeAngle] = useState('');
   const [error, setError] = useState('');
-  
+
   const lastSentData = useRef(null);
 
   const isValidNumber = (n) => typeof n === 'number' && !isNaN(n);
@@ -30,20 +30,8 @@ export default function VSDescentCalculator({ onValidData }) {
       gs <= 0
     ) {
       setVerticalSpeed('');
-      setDescentAngle('');
+      setAltChangeAngle('');
       setError('');
-      // Only call onValidData(null) if previous was not null
-      if (lastSentData.current !== null) {
-        lastSentData.current = null;
-        onValidData && onValidData(null);
-      }
-      return;
-    }
-
-    if (curAlt <= tgtAlt) {
-      setVerticalSpeed('');
-      setDescentAngle('');
-      setError('Current altitude must be higher than target altitude');
       if (lastSentData.current !== null) {
         lastSentData.current = null;
         onValidData && onValidData(null);
@@ -52,32 +40,42 @@ export default function VSDescentCalculator({ onValidData }) {
     }
 
     setError('');
-    const altDiff = curAlt - tgtAlt;
+
+    const climb = curAlt < tgtAlt;
+    const descent = curAlt > tgtAlt;
+    const altDiff = Math.abs(curAlt - tgtAlt);
+
+    // Vertical Speed = altitude difference divided by time in minutes (distance/groundspeed)
     const vs = (altDiff / dist) * (gs / 60);
+
+    // Angle in radians = atan(altDiff / distance in feet)
     const angleRad = Math.atan(altDiff / (dist * 6076.12));
     const angleDeg = angleRad * (180 / Math.PI);
 
-    setVerticalSpeed(vs.toFixed(0));
-    setDescentAngle(angleDeg.toFixed(2));
+    // Determine sign prefix
+    const sign = climb ? '+' : descent ? '−' : '';
 
-    // Compose new data ensuring all are numbers and no NaNs
+    setVerticalSpeed(sign + vs.toFixed(0));
+    setAltChangeAngle(sign + angleDeg.toFixed(2));
+
     const newData = {
       curAlt,
+      tgtAlt,
       dist,
       gs,
-      vs,
-      descentAngle: angleDeg,
+      vs: climb ? vs : -vs,                 // positive VS if climb, negative if descent
+      altChangeAngle: climb ? angleDeg : -angleDeg,  // signed angle
     };
 
-    // Compare previous and new data deeply (only simple props)
     const last = lastSentData.current;
     if (
       !last ||
       last.curAlt !== newData.curAlt ||
+      last.tgtAlt !== newData.tgtAlt ||
       last.dist !== newData.dist ||
       last.gs !== newData.gs ||
       last.vs !== newData.vs ||
-      last.descentAngle !== newData.descentAngle
+      last.altChangeAngle !== newData.altChangeAngle
     ) {
       lastSentData.current = newData;
       onValidData && onValidData(newData);
@@ -86,7 +84,6 @@ export default function VSDescentCalculator({ onValidData }) {
 
   useEffect(() => {
     calculate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAlt, nextAlt, distanceToGo, groundSpeed]);
 
   return (
@@ -144,8 +141,8 @@ export default function VSDescentCalculator({ onValidData }) {
       </Grid>
       <Grid item xs={6}>
         <TextField
-          label="Descent Angle (°)"
-          value={descentAngle}
+          label="Altitude Change Angle (°)"
+          value={altChangeAngle}
           InputProps={{ readOnly: true }}
           fullWidth
         />
