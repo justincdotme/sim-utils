@@ -22,7 +22,7 @@ function niceIncrement(maxValue, ticks) {
     return magnitude;
 }
 
-export default function DescentRateGraph({ data, xTicks = 10, yTicks = 10 }) {
+export default function AltitudeChangeGraph({ data, xTicks = 10, yTicks = 10 }) {
     if (!data || !data.curAlt || !data.dist) {
         return null;
     }

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { TextField, Grid, InputAdornment } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
-export default function FPADescentCalculator({ onValidData }) {
+export default function FPACalculator({ onValidData }) {
   const [currentAlt, setCurrentAlt] = useState('');
   const [distanceToGo, setDistanceToGo] = useState('');
   const [descentAngle, setDescentAngle] = useState('');
@@ -11,6 +11,8 @@ export default function FPADescentCalculator({ onValidData }) {
   const [vspeed, setVspeed] = useState('');
   const [error, setError] = useState('');
   const [isEndingAltNegative, setIsEndingAltNegative] = useState(false);
+  const [sign, setSign] = useState(''); // added sign state
+  const [signedAngle, setSignedAngle] = useState(null); // added signedAngle state
 
   const lastSentData = useRef(null);
 
@@ -20,11 +22,19 @@ export default function FPADescentCalculator({ onValidData }) {
     const angle = parseFloat(descentAngle);
     const gs = parseFloat(groundSpeed);
 
-    if (isNaN(curAlt) || isNaN(dist) || isNaN(angle) || dist <= 0 || curAlt <= 0) {
+    if (
+      isNaN(curAlt) ||
+      isNaN(dist) ||
+      isNaN(angle) ||
+      dist <= 0 ||
+      curAlt <= 0
+    ) {
       setEndingAlt('');
       setVspeed('');
       setError('');
       setIsEndingAltNegative(false);
+      setSign('');
+      setSignedAngle(null);
       if (lastSentData.current !== null) {
         lastSentData.current = null;
         onValidData && onValidData(null);
@@ -35,25 +45,38 @@ export default function FPADescentCalculator({ onValidData }) {
     setError('');
 
     const distanceFeet = dist * 6076.12;
-    const descentFeet = Math.tan((angle * Math.PI) / 180) * distanceFeet;
-    const finalAlt = curAlt - descentFeet;
+    const verticalDistance = Math.tan((angle * Math.PI) / 180) * distanceFeet;
+
+    const assumedEndAltClimb = curAlt + verticalDistance;
+    const assumedEndAltDescent = curAlt - verticalDistance;
+
+    const isClimb = assumedEndAltClimb > curAlt;
+    const isDescent = assumedEndAltDescent < curAlt;
+
+    let finalAlt, vs;
+    if (isClimb) {
+      finalAlt = assumedEndAltClimb;
+      vs = (verticalDistance / distanceFeet) * (gs * 6076.12 / 60);
+      setSign('+');
+      setSignedAngle(angle);
+    } else {
+      finalAlt = assumedEndAltDescent;
+      vs = -((verticalDistance / distanceFeet) * (gs * 6076.12 / 60));
+      setSign('−');
+      setSignedAngle(-angle);
+    }
 
     setIsEndingAltNegative(finalAlt < 0);
     setEndingAlt(finalAlt.toFixed(0));
-
-    if (!isNaN(gs) && gs > 0) {
-      const vs = (descentFeet / distanceFeet) * (gs * 6076.12 / 60);
-      setVspeed(vs.toFixed(0));
-    } else {
-      setVspeed('---');
-    }
+    setVspeed(sign + vs.toFixed(0)); // use latest sign state here for consistency
 
     const newData = {
       curAlt,
       dist,
-      descentAngle: angle,
+      descentAngle: signedAngle,
       gs: gs > 0 ? gs : null,
-      vs: !isNaN(gs) && gs > 0 ? (descentFeet / distanceFeet) * (gs * 6076.12 / 60) : null,
+      vs,
+      endAlt: finalAlt,
     };
 
     if (JSON.stringify(newData) !== JSON.stringify(lastSentData.current)) {
@@ -64,12 +87,10 @@ export default function FPADescentCalculator({ onValidData }) {
 
   useEffect(() => {
     calculate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAlt, distanceToGo, descentAngle, groundSpeed]);
 
   return (
     <Grid container spacing={2}>
-      {/* UI unchanged */}
       <Grid item xs={6}>
         <TextField
           label="Current Altitude (ft)"
@@ -95,6 +116,9 @@ export default function FPADescentCalculator({ onValidData }) {
           value={descentAngle}
           onChange={(e) => setDescentAngle(e.target.value)}
           fullWidth
+          InputProps={{
+            startAdornment: sign ? <InputAdornment position="start">{sign}</InputAdornment> : null,
+          }}
         />
       </Grid>
       <Grid item xs={6}>
@@ -125,7 +149,7 @@ export default function FPADescentCalculator({ onValidData }) {
       <Grid item xs={6}>
         <TextField
           label="Required V/S (ft/min)"
-          value={vspeed}
+          value={sign + vspeed.replace(/^\+|−/, '')} // ensure no duplicate sign
           InputProps={{ readOnly: true }}
           fullWidth
         />

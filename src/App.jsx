@@ -18,7 +18,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7'; // Sun
 import MenuIcon from '@mui/icons-material/Menu';
 
 import LocalToUtcConverter from './Components/LocalToUtcConverter';
-import DescentCalculator from './Components/DescentTools/DescentCalculator';
+import AltitudeChangeCalculator from './Components/Altitude/AltitudeChangeCalculator';
 import UtcToLocalConverter from './Components/UtcToLocalConverter';
 
 const THEME_KEY = 'sim-utils-theme';
@@ -44,10 +44,9 @@ export default function App() {
         [actualMode]
     );
 
-    // Refs for scrolling targets
     const locUtcRef = useRef(null);
     const utcLocRef = useRef(null);
-    const descentRef = useRef(null);
+    const altChangeRef = useRef(null);
 
     const toggleTheme = () => {
         const newMode =
@@ -109,14 +108,14 @@ export default function App() {
             </AppBar>
 
             <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={closeMenu}>
-                <MenuItem onClick={() => scrollToRef(descentRef)}>📉 Descent Calculator</MenuItem>
+                <MenuItem onClick={() => scrollToRef(altChangeRef)}>📉 Altitude Calculator</MenuItem>
                 <MenuItem onClick={() => scrollToRef(locUtcRef)}>🕓 Local to UTC Converter</MenuItem>
                 <MenuItem onClick={() => scrollToRef(utcLocRef)}>🕓 UTC to Local Converter</MenuItem>
             </Menu>
 
             <Container maxWidth="md" sx={{ py: 4 }}>
-                <section ref={descentRef} id="descent-calculator">
-                    <DescentCalculator />
+                <section ref={altChangeRef} id="descent-calculator">
+                    <AltitudeChangeCalculator />
                 </section>
                 <section ref={locUtcRef} id="local-to-utc-converter">
                     <LocalToUtcConverter setSharedUtcTime={setSharedUtcTime} />
