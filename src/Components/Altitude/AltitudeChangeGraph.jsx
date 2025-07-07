@@ -10,6 +10,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { Box } from '@mui/material';
+import { blueIcon } from '@/constants/theme.js';
 
 function niceIncrement(maxValue, ticks) {
   if (maxValue === 0) return 1;

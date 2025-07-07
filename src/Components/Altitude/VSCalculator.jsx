@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TextField, Grid, Box } from '@mui/material';
+import { blueIcon } from '@/constants/theme.js';
+
 
 export default function VSCalculator({ onValidData, isClimb, isDescent }) {
   const [currentAlt, setCurrentAlt] = useState('');

@@ -14,9 +14,9 @@
     "type": "git",
     "url": "git+https://github.com/justincdotme/sim-utils.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["flightsim", "tool", "calculator", "util", "flight", "sim", "simulator"],
+  "author": "Justin Christenson",
+  "license": "AGPL",
   "bugs": {
     "url": "https://github.com/justincdotme/sim-utils/issues"
   },

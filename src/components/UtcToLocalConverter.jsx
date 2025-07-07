@@ -17,6 +17,8 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import TIMEZONES from '../constants/timezones';
+import { blueIcon } from '@/constants/theme.js';
+
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -56,7 +58,7 @@ export default function UtcToLocalConverter() {
                 <Typography variant="h5" component="h2">
                     UTC to Local Time Converter
                 </Typography>
-                <AccessTimeIcon fontSize="large" />
+                <AccessTimeIcon fontSize="large" sx={blueIcon} />
             </Box>
             <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
                 <Grid item xs={9}>
