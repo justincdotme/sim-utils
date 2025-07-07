@@ -15,6 +15,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import TIMEZONES from '../constants/timezones';
+import { blueIcon } from '@/constants/theme.js';
 
 export default function LocalToUtcConverter({ onInitialUtcTimeCalculated }) {
   const systemTzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -54,7 +55,7 @@ export default function LocalToUtcConverter({ onInitialUtcTimeCalculated }) {
         <Typography variant="h5" component="h2">
           Local to UTC Time Converter
         </Typography>
-        <AccessTimeIcon fontSize="large" />
+        <AccessTimeIcon fontSize="large" sx={blueIcon} />
       </Box>
       <Grid container spacing={2}>
         <Grid item xs={12}>

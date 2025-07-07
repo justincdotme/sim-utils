@@ -6,6 +6,7 @@ import StraightenIcon from '@mui/icons-material/Straighten';
 import VSCalculator from './VSCalculator';
 import FPACalculator from './FPACalculator';
 import AltitudeChangeGraph from './AltitudeChangeGraph';
+import { blueIcon } from '@/constants/theme.js';
 
 export default function AltitudeChangeCalculator() {
   const [mode, setMode] = useState(0);
@@ -39,10 +40,10 @@ export default function AltitudeChangeCalculator() {
   const isDescent = startAlt !== null && endAlt !== null && startAlt > endAlt;
 
   const icon = isClimb
-    ? <FlightTakeoffIcon fontSize="large" color="primary" />
+    ? <FlightTakeoffIcon fontSize="large" sx={blueIcon} />
     : isDescent
-      ? <FlightLandIcon fontSize="large" color="primary" />
-      : <StraightenIcon fontSize="large" />; // default icon if altitudes unknown or equal
+      ? <FlightLandIcon fontSize="large" sx={blueIcon} />
+      : <StraightenIcon fontSize="large" sx={blueIcon} />; // default icon if altitudes unknown or equal
 
   return (
     <Paper elevation={3} sx={{ p: 3}}>

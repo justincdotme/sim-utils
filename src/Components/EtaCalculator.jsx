@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Box, Typography, Grid, TextField } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { blueIcon } from '@/constants/theme.js';
 
 export default function ETACalculator() {
   const [distanceToGo, setDistanceToGo] = useState('');
@@ -28,7 +29,7 @@ export default function ETACalculator() {
         <Typography variant="h5" component="h2">
           ETA Calculator
         </Typography>
-        <AccessTimeIcon fontSize="large" />
+        <AccessTimeIcon fontSize="large" sx={blueIcon} />
       </Box>
 
       <Grid container spacing={2}>

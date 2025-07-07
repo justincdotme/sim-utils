@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TextField, Grid, InputAdornment } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { blueIcon } from '@/constants/theme.js';
 
 export default function FPACalculator({ onValidData }) {
   const [currentAlt, setCurrentAlt] = useState('');

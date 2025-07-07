@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
     ThemeProvider,
     createTheme,
@@ -16,11 +16,24 @@ import {
 import Brightness4Icon from '@mui/icons-material/Brightness4'; // Moon
 import Brightness7Icon from '@mui/icons-material/Brightness7'; // Sun
 import MenuIcon from '@mui/icons-material/Menu';
+import AirIcon from '@mui/icons-material/Air';
+
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ShowChartIcon from '@mui/icons-material/ShowChart'; // 📉 Altitude Calculator
+import AccessTimeIcon from '@mui/icons-material/AccessTime'; // 🕓 Local to UTC Converter
+import PublicIcon from '@mui/icons-material/Public';         // 🌐 UTC to Local Converter
+import TimerIcon from '@mui/icons-material/Timer';           // ⏱️ ETA Calculator
+import FastForwardIcon from '@mui/icons-material/FastForward'; // ⏩ TAS Calculator
+import { blueIcon } from '@/constants/theme.js';
+
 
 import LocalToUtcConverter from './Components/LocalToUtcConverter';
 import AltitudeChangeCalculator from './Components/Altitude/AltitudeChangeCalculator';
 import UtcToLocalConverter from './Components/UtcToLocalConverter';
 import ETACalculator from './Components/EtaCalculator';
+import TASCalculator from './Components/TASCalculator';
+import WCACalculator from './Components/WCACalculator';
 
 const THEME_KEY = 'sim-utils-theme';
 
@@ -49,6 +62,8 @@ export default function App() {
     const utcLocRef = useRef(null);
     const altChangeRef = useRef(null);
     const etaCalcRef = useRef(null);
+    const tasCalcRef = useRef(null);
+    const wcaCalcRef = useRef(null);
 
     const toggleTheme = () => {
         const newMode =
@@ -108,14 +123,32 @@ export default function App() {
                     </IconButton>
                 </Toolbar>
             </AppBar>
-
             <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={closeMenu}>
-                <MenuItem onClick={() => scrollToRef(altChangeRef)}>📉 Altitude Calculator</MenuItem>
-                <MenuItem onClick={() => scrollToRef(locUtcRef)}>🕓 Local to UTC Converter</MenuItem>
-                <MenuItem onClick={() => scrollToRef(utcLocRef)}>🕓 UTC to Local Converter</MenuItem>
-                <MenuItem onClick={() => scrollToRef(etaCalcRef)}>🕓 ETA Calculator</MenuItem>
+            <MenuItem onClick={() => scrollToRef(altChangeRef)}>
+                <ListItemIcon><ShowChartIcon fontSize="small" sx={blueIcon} /></ListItemIcon>
+                <ListItemText>Altitude Calculator</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => scrollToRef(locUtcRef)}>
+                <ListItemIcon><AccessTimeIcon fontSize="small" sx={blueIcon} /></ListItemIcon>
+                <ListItemText>Local to UTC Converter</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => scrollToRef(utcLocRef)}>
+                <ListItemIcon><PublicIcon fontSize="small" sx={blueIcon} /></ListItemIcon>
+                <ListItemText>UTC to Local Converter</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => scrollToRef(etaCalcRef)}>
+                <ListItemIcon><TimerIcon fontSize="small" sx={blueIcon} /></ListItemIcon>
+                <ListItemText>ETA Calculator</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => scrollToRef(tasCalcRef)}>
+                <ListItemIcon><FastForwardIcon fontSize="small" sx={blueIcon} /></ListItemIcon>
+                <ListItemText>TAS Calculator</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => scrollToRef(wcaCalcRef)}>
+                <ListItemIcon><AirIcon fontSize="small" sx={blueIcon} /></ListItemIcon>
+                <ListItemText>WCA Calculator</ListItemText>
+            </MenuItem>
             </Menu>
-
             <Container maxWidth="md" sx={{ py: 4 }}>
                 <section ref={altChangeRef} id="descent-calculator">
                     <AltitudeChangeCalculator />
@@ -128,6 +161,12 @@ export default function App() {
                 </section>
                 <section ref={etaCalcRef}>
                     <ETACalculator />
+                </section>
+                <section ref={tasCalcRef}>
+                    <TASCalculator />
+                </section>
+                <section ref={wcaCalcRef}>
+                    <WCACalculator />
                 </section>
             </Container>
         </ThemeProvider>
